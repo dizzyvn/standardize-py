@@ -1,3 +1,4 @@
+
 {
   pkgs ? import <nixpkgs> {}
 }:
@@ -45,11 +46,12 @@ with import <nixpkgs> {};
 
       export PIPENV_VENV_IN_PROJECT=1
       export JUPYTER_PATH="${pkgs.lib.concatMapStringsSep ":" (p: "${p}/share/jupyter/") kernels}"
-      export PYTHONPATH=venv/lib/python3.7/site-packages/:$PYTHONPATH
+      export PYTHONPATH=_build/pip_packages/lib/python3.7/site-packages:venv/lib/python3.7/site-packages/:$PYTHONPATH
       export LD_LIBRARY_PATH=${pkgs.stdenv.cc.cc.lib}/lib:${pkgs.cudatoolkit_10_1}/lib:${pkgs.cudnn_cudatoolkit_10_1}/lib:${pkgs.cudatoolkit_10_1.lib}/lib:$LD_LIBRARY_PATH
       unset SOURCE_DATE_EPOCH
 
-      alias pip="python -m pip"
+      mkdir ~/_build
+      alias pip="PIP_PREFIX='$(pwd)/_build/pip_packages' TMPDIR='$HOME'/_build python -m pip"      
       source .venv/bin/activate
 
       pip install -r requirements.txt
